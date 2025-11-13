@@ -1,0 +1,36 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="atproto Cal - Decentralized Scheduling">
+  <main style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
+    <header style="text-align: center; margin-bottom: 3rem;">
+      <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">atproto Cal</h1>
+      <p style="font-size: 1.2rem; color: #666;">Decentralized scheduling built on the AT Protocol</p>
+    </header>
+
+    <section style="background: white; border-radius: 8px; padding: 2rem; margin-bottom: 2rem;">
+      <h2 style="margin-bottom: 1rem;">Welcome</h2>
+      <p style="margin-bottom: 1rem;">
+        A decentralized scheduling platform where your availability is stored on your Personal Data Server (PDS),
+        and bookings are managed seamlessly across the AT Protocol network.
+      </p>
+      <div style="margin-top: 2rem;">
+        <a href="/auth/login" style="display: inline-block; background: #0066cc; color: white; padding: 0.75rem 1.5rem; border-radius: 4px; text-decoration: none;">
+          Sign in with atproto
+        </a>
+      </div>
+    </section>
+
+    <section style="background: white; border-radius: 8px; padding: 2rem;">
+      <h2 style="margin-bottom: 1rem;">Features</h2>
+      <ul style="list-style: none; padding: 0;">
+        <li style="margin-bottom: 0.75rem;">✓ Sign in with your atproto handle</li>
+        <li style="margin-bottom: 0.75rem;">✓ Store availability on your PDS</li>
+        <li style="margin-bottom: 0.75rem;">✓ Let others book time with you</li>
+        <li style="margin-bottom: 0.75rem;">✓ Integrate with Google Calendar</li>
+        <li style="margin-bottom: 0.75rem;">✓ Receive ICS calendar invites</li>
+      </ul>
+    </section>
+  </main>
+</Layout>

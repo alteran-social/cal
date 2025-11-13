@@ -1,0 +1,93 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { createAtProtoClient } from '../../lib/atproto/client';
+
+const { handle } = Astro.params;
+
+if (!handle) {
+  return Astro.redirect('/');
+}
+
+let did: string | null = null;
+let availability: any[] = [];
+let error: string | null = null;
+
+try {
+  const client = createAtProtoClient();
+  did = await client.resolveHandle(handle);
+  availability = await client.getAvailability(did);
+} catch (e) {
+  console.error('Error fetching availability:', e);
+  error = 'Unable to load availability for this user';
+}
+---
+
+<Layout title={`Book with ${handle} - atproto Cal`}>
+  <main style="max-width: 1000px; margin: 2rem auto; padding: 2rem;">
+    <header style="text-align: center; margin-bottom: 3rem;">
+      <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Book time with {handle}</h1>
+      {did && <p style="color: #666; font-size: 0.9rem;">DID: {did}</p>}
+    </header>
+
+    {error ? (
+      <div style="background: #fee; border: 1px solid #fcc; color: #c33; padding: 1rem; border-radius: 4px; text-align: center;">
+        {error}
+      </div>
+    ) : availability.length === 0 ? (
+      <div style="background: white; border-radius: 8px; padding: 3rem; text-align: center;">
+        <p style="color: #666; font-size: 1.1rem;">
+          This user hasn't set up any availability slots yet.
+        </p>
+      </div>
+    ) : (
+      <div style="display: grid; gap: 2rem;">
+        {availability.map((slot) => (
+          <div style="background: white; border-radius: 8px; padding: 2rem; border: 1px solid #e0e0e0;">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+              <div>
+                <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem;">{slot.title}</h3>
+                {slot.description && <p style="color: #666;">{slot.description}</p>}
+              </div>
+              <span style="background: #e8f4fd; color: #0066cc; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.9rem;">
+                {slot.duration} min
+              </span>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+              <h4 style="margin-bottom: 0.75rem; color: #666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                Available times
+              </h4>
+              <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                {slot.timeSlots.map((timeSlot: any) => (
+                  <div style="display: flex; align-items: center; gap: 1rem; padding: 0.5rem; border: 1px solid #eee; border-radius: 4px;">
+                    <span style="min-width: 100px; font-weight: 500;">
+                      {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][timeSlot.dayOfWeek]}
+                    </span>
+                    <span style="color: #666;">
+                      {timeSlot.startTime} - {timeSlot.endTime}
+                    </span>
+                    <span style="color: #999; font-size: 0.9rem;">
+                      {timeSlot.timezone}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <button
+              style="width: 100%; margin-top: 1.5rem; background: #0066cc; color: white; padding: 0.75rem; border: none; border-radius: 4px; font-size: 1rem; font-weight: 500; cursor: pointer;"
+            >
+              Select a time
+            </button>
+          </div>
+        ))}
+      </div>
+    )}
+
+    <div style="text-align: center; margin-top: 3rem;">
+      <a href="/" style="color: #0066cc;">
+        ← Back to home
+      </a>
+    </div>
+  </main>
+</Layout>
