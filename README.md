@@ -43,6 +43,13 @@ A decentralized scheduling platform built on the AT Protocol where availability 
 └── drizzle/             # Database migrations
 ```
 
+## Documentation
+
+- **[DEVELOPMENT.md](./DEVELOPMENT.md)** - Local development setup and workflow
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - System architecture and design decisions
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Production deployment guide for Cloudflare
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Guidelines for contributors
+
 ## Getting Started
 
 ### Prerequisites
