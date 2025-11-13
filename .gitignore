@@ -13,3 +13,6 @@ wrangler.toml
 # Database
 *.db
 *.sqlite
+
+# Drizzle migrations
+drizzle/
