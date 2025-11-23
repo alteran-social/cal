@@ -9,16 +9,14 @@ if (!handle) {
 }
 
 let did: string | null = null;
-let availability: any[] = [];
 let error: string | null = null;
 
 try {
   const client = createAtProtoClient();
   did = await client.resolveHandle(handle);
-  availability = await client.getAvailability(did);
 } catch (e) {
-  console.error('Error fetching availability:', e);
-  error = 'Unable to load availability for this user';
+  console.error('Error fetching user:', e);
+  error = 'Unable to resolve user handle';
 }
 ---
 
@@ -33,54 +31,56 @@ try {
       <div style="background: #fee; border: 1px solid #fcc; color: #c33; padding: 1rem; border-radius: 4px; text-align: center;">
         {error}
       </div>
-    ) : availability.length === 0 ? (
-      <div style="background: white; border-radius: 8px; padding: 3rem; text-align: center;">
-        <p style="color: #666; font-size: 1.1rem;">
-          This user hasn't set up any availability slots yet.
-        </p>
-      </div>
     ) : (
-      <div style="display: grid; gap: 2rem;">
-        {availability.map((slot) => (
-          <div style="background: white; border-radius: 8px; padding: 2rem; border: 1px solid #e0e0e0;">
-            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-              <div>
-                <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem;">{slot.title}</h3>
-                {slot.description && <p style="color: #666;">{slot.description}</p>}
-              </div>
-              <span style="background: #e8f4fd; color: #0066cc; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.9rem;">
-                {slot.duration} min
-              </span>
-            </div>
+      <div id="booking-app" data-did={did} data-handle={handle}>
+        <!-- Date Selection -->
+        <div class="step-1" style="text-align: center; margin-bottom: 2rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Select a Date</label>
+          <input type="date" id="date-picker" style="padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1.1rem;" />
+        </div>
 
-            <div style="margin-top: 1.5rem;">
-              <h4 style="margin-bottom: 0.75rem; color: #666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                Available times
-              </h4>
-              <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                {slot.timeSlots.map((timeSlot: any) => (
-                  <div style="display: flex; align-items: center; gap: 1rem; padding: 0.5rem; border: 1px solid #eee; border-radius: 4px;">
-                    <span style="min-width: 100px; font-weight: 500;">
-                      {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][timeSlot.dayOfWeek]}
-                    </span>
-                    <span style="color: #666;">
-                      {timeSlot.startTime} - {timeSlot.endTime}
-                    </span>
-                    <span style="color: #999; font-size: 0.9rem;">
-                      {timeSlot.timezone}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+        <!-- Slots Container -->
+        <div id="slots-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+          <!-- Slots will be injected here -->
+        </div>
 
-            <button
-              style="width: 100%; margin-top: 1.5rem; background: #0066cc; color: white; padding: 0.75rem; border: none; border-radius: 4px; font-size: 1rem; font-weight: 500; cursor: pointer;"
-            >
-              Select a time
-            </button>
-          </div>
-        ))}
+        <div id="loading" style="display: none; text-align: center; color: #666;">
+            Loading available times...
+        </div>
+
+        <div id="no-slots" style="display: none; text-align: center; color: #666; padding: 2rem; background: #f5f5f5; border-radius: 8px;">
+            No available slots for this date.
+        </div>
+
+        <!-- Booking Form (Hidden initially) -->
+        <div id="booking-form" style="display: none; max-width: 500px; margin: 0 auto; background: white; padding: 2rem; border-radius: 8px; border: 1px solid #e0e0e0;">
+            <h3 style="margin-bottom: 1.5rem; text-align: center;">Confirm Booking</h3>
+            <div style="margin-bottom: 1rem; text-align: center; font-weight: 500; color: #0066cc;" id="selected-time-display"></div>
+
+            <form id="confirm-form" style="display: flex; flex-direction: column; gap: 1rem;">
+                <input type="hidden" name="startTime" id="input-startTime" />
+                <input type="hidden" name="endTime" id="input-endTime" />
+                <input type="hidden" name="hostDid" value={did} />
+
+                <div>
+                    <label style="display: block; margin-bottom: 0.25rem; font-size: 0.9rem;">Your Email</label>
+                    <input type="email" name="bookerEmail" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;" />
+                </div>
+
+                <div>
+                    <label style="display: block; margin-bottom: 0.25rem; font-size: 0.9rem;">Notes</label>
+                    <textarea name="bookerNote" rows="2" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+                </div>
+
+                <button type="submit" style="background: #0066cc; color: white; padding: 0.75rem; border: none; border-radius: 4px; font-weight: 500; cursor: pointer;">
+                    Confirm Booking
+                </button>
+
+                <button type="button" id="cancel-booking" style="background: transparent; color: #666; padding: 0.5rem; border: none; cursor: pointer; text-decoration: underline;">
+                    Cancel
+                </button>
+            </form>
+        </div>
       </div>
     )}
 
@@ -91,3 +91,131 @@ try {
     </div>
   </main>
 </Layout>
+
+<script>
+  const did = document.getElementById('booking-app')?.dataset.did;
+  const datePicker = document.getElementById('date-picker') as HTMLInputElement;
+  const slotsContainer = document.getElementById('slots-container');
+  const loading = document.getElementById('loading');
+  const noSlots = document.getElementById('no-slots');
+  const bookingForm = document.getElementById('booking-form');
+  const confirmForm = document.getElementById('confirm-form') as HTMLFormElement;
+  const cancelBtn = document.getElementById('cancel-booking');
+
+  // Set min date to today
+  if (datePicker) {
+      datePicker.min = new Date().toISOString().split('T')[0];
+      datePicker.addEventListener('change', fetchSlots);
+  }
+
+  if (cancelBtn) {
+      cancelBtn.addEventListener('click', () => {
+          bookingForm!.style.display = 'none';
+          slotsContainer!.style.display = 'grid';
+      });
+  }
+
+  if (confirmForm) {
+      confirmForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const btn = confirmForm.querySelector('button[type="submit"]') as HTMLButtonElement;
+          const originalText = btn.innerText;
+          btn.innerText = 'Booking...';
+          btn.disabled = true;
+
+          const formData = new FormData(confirmForm);
+          const data = Object.fromEntries(formData.entries());
+
+          try {
+              const res = await fetch('/api/book/create', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(data)
+              });
+
+              if (res.ok) {
+                  alert('Booking Confirmed! Check your email.');
+                  window.location.reload();
+              } else {
+                  const err = await res.json();
+                  alert('Booking failed: ' + (err.error || 'Unknown error'));
+              }
+          } catch (error) {
+              alert('Error submitting booking');
+          } finally {
+              btn.innerText = originalText;
+              btn.disabled = false;
+          }
+      });
+  }
+
+  async function fetchSlots() {
+      if (!datePicker.value || !did) return;
+
+      slotsContainer!.innerHTML = '';
+      bookingForm!.style.display = 'none';
+      slotsContainer!.style.display = 'grid';
+      loading!.style.display = 'block';
+      noSlots!.style.display = 'none';
+
+      const date = new Date(datePicker.value);
+      const start = new Date(date);
+      start.setUTCHours(0,0,0,0);
+      const end = new Date(date);
+      end.setUTCHours(23,59,59,999);
+
+      try {
+          const res = await fetch(`/api/availability/query?did=${did}&start=${start.toISOString()}&end=${end.toISOString()}`);
+          const data = await res.json();
+
+          loading!.style.display = 'none';
+
+          if (data.slots && data.slots.length > 0) {
+              data.slots.forEach((slot: any) => {
+                  const startDetails = new Date(slot.start);
+                  const endDetails = new Date(slot.end);
+
+                  // Format time (HH:MM)
+                  const timeStr = startDetails.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                  const btn = document.createElement('button');
+                  btn.className = 'slot-btn';
+                  btn.style.cssText = `
+                      padding: 1rem;
+                      border: 1px solid #0066cc;
+                      background: white;
+                      color: #0066cc;
+                      border-radius: 4px;
+                      cursor: pointer;
+                      font-weight: 500;
+                  `;
+                  btn.innerText = timeStr;
+                  btn.onclick = () => selectSlot(slot);
+
+                  slotsContainer!.appendChild(btn);
+              });
+          } else {
+              noSlots!.style.display = 'block';
+          }
+
+      } catch (e) {
+          console.error(e);
+          loading!.style.display = 'none';
+          alert('Error fetching slots');
+      }
+  }
+
+  function selectSlot(slot: any) {
+      const start = new Date(slot.start);
+      const end = new Date(slot.end);
+      const dateStr = start.toLocaleDateString();
+      const timeStr = `${start.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} - ${end.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
+
+      document.getElementById('selected-time-display')!.innerText = `${dateStr} @ ${timeStr}`;
+      (document.getElementById('input-startTime') as HTMLInputElement).value = slot.start;
+      (document.getElementById('input-endTime') as HTMLInputElement).value = slot.end;
+
+      slotsContainer!.style.display = 'none';
+      bookingForm!.style.display = 'block';
+  }
+</script>
