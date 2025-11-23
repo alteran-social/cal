@@ -1,7 +1,7 @@
 /**
  * atproto Schema Definition for Availability
  * 
- * Collection: social.schedule.availability
+ * Collection: slot.calendar.alteran.social
  * 
  * This represents a user's available time slots that others can book.
  */
@@ -35,7 +35,7 @@ export interface Availability {
  */
 export const availabilityLexicon = {
   lexicon: 1,
-  id: 'social.schedule.availability',
+  id: 'slot.calendar.alteran.social',
   defs: {
     main: {
       type: 'record',

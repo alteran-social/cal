@@ -167,7 +167,7 @@ The application uses Cloudflare D1 (SQLite) with the following tables:
 Availability is stored on users' PDS using the collection:
 
 ```
-social.schedule.availability
+slot.calendar.alteran.social
 ```
 
 See `src/lib/atproto/schema.ts` for the full lexicon definition.

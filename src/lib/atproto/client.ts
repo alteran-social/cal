@@ -33,14 +33,14 @@ export class AtProtoClient {
    */
   async getAvailability(did: string): Promise<Availability[]> {
     // This would use the atproto API to fetch records from the collection
-    // social.schedule.availability on the user's PDS
+    // slot.calendar.alteran.social on the user's PDS
     
     // Placeholder implementation
     try {
       // In production, this would use:
       // const records = await this.agent.com.atproto.repo.listRecords({
       //   repo: did,
-      //   collection: 'social.schedule.availability'
+      //   collection: 'slot.calendar.alteran.social'
       // });
       return [];
     } catch (error) {
@@ -68,7 +68,7 @@ export class AtProtoClient {
     // In production:
     // await this.agent.com.atproto.repo.createRecord({
     //   repo: did,
-    //   collection: 'social.schedule.availability',
+    //   collection: 'slot.calendar.alteran.social',
     //   record
     // });
 
@@ -86,7 +86,7 @@ export class AtProtoClient {
     // In production:
     // await this.agent.com.atproto.repo.putRecord({
     //   repo: did,
-    //   collection: 'social.schedule.availability',
+    //   collection: 'slot.calendar.alteran.social',
     //   rkey: recordKey,
     //   record: availability
     // });
@@ -99,7 +99,7 @@ export class AtProtoClient {
     // In production:
     // await this.agent.com.atproto.repo.deleteRecord({
     //   repo: did,
-    //   collection: 'social.schedule.availability',
+    //   collection: 'slot.calendar.alteran.social',
     //   rkey: recordKey
     // });
   }

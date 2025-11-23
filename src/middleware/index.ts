@@ -5,6 +5,7 @@ import { getSession } from '../lib/auth/session';
 const protectedRoutes = ['/dashboard', '/settings', '/availability'];
 
 // API routes that require authentication
+// Note: /api/availability/query must be public for booking pages
 const protectedApiRoutes = ['/api/availability'];
 
 export const onRequest = defineMiddleware(async (context, next) => {
@@ -12,7 +13,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   // Check if this is a protected route
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
-  const isProtectedApiRoute = protectedApiRoutes.some(route => pathname.startsWith(route));
+  // Exclude /api/availability/query from protection
+  const isProtectedApiRoute = protectedApiRoutes.some(route =>
+    pathname.startsWith(route) && !pathname.startsWith('/api/availability/query')
+  );
 
   if (isProtectedRoute || isProtectedApiRoute) {
     const session = await getSession(context.request);

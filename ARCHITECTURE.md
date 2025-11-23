@@ -33,7 +33,7 @@ This document describes the architecture of atproto Cal, a decentralized schedul
 ### Decentralized (AT Protocol)
 
 **User's Personal Data Server (PDS)**
-- Availability slots (collection: `social.schedule.availability`)
+- Availability slots (collection: `slot.calendar.alteran.social`)
 - User's public profile information
 - Follows/social graph (for booking rules)
 
