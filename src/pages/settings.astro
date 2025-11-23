@@ -1,0 +1,167 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getSession } from '../lib/auth/session';
+
+const session = await getSession(Astro.request);
+
+if (!session) {
+  return Astro.redirect('/auth/login');
+}
+---
+
+<Layout title="Settings - atproto Cal">
+  <main style="max-width: 900px; margin: 2rem auto; padding: 2rem;">
+    <header style="margin-bottom: 2rem;">
+      <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Settings</h1>
+      <p style="color: #666;">Manage your account and preferences</p>
+    </header>
+
+    <div style="display: flex; flex-direction: column; gap: 2rem;">
+      <!-- Profile Settings -->
+      <section style="background: white; border-radius: 8px; padding: 2rem;">
+        <h2 style="font-size: 1.3rem; margin-bottom: 1.5rem;">Profile</h2>
+        
+        <form style="display: flex; flex-direction: column; gap: 1.5rem;">
+          <div>
+            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
+              Handle
+            </label>
+            <input
+              type="text"
+              value={session.handle}
+              disabled
+              style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; background: #f5f5f5; color: #666;"
+            />
+            <small style="color: #666; margin-top: 0.25rem; display: block;">
+              Your AT Protocol handle cannot be changed here
+            </small>
+          </div>
+
+          <div>
+            <label for="displayName" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
+              Display Name
+            </label>
+            <input
+              type="text"
+              id="displayName"
+              name="displayName"
+              placeholder="Your display name"
+              style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px;"
+            />
+          </div>
+
+          <div>
+            <label for="bio" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
+              Bio
+            </label>
+            <textarea
+              id="bio"
+              name="bio"
+              rows="3"
+              placeholder="Tell people about yourself"
+              style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; resize: vertical;"
+            ></textarea>
+          </div>
+
+          <button
+            type="submit"
+            style="background: #0066cc; color: white; padding: 0.75rem; border: none; border-radius: 4px; font-weight: 500; cursor: pointer;"
+          >
+            Save Profile
+          </button>
+        </form>
+      </section>
+
+      <!-- Calendar Integration -->
+      <section style="background: white; border-radius: 8px; padding: 2rem;">
+        <h2 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Calendar Integration</h2>
+        <p style="color: #666; margin-bottom: 1.5rem; font-size: 0.9rem;">
+          Connect your Google Calendar to automatically block out busy times
+        </p>
+
+        <div style="border: 1px solid #e0e0e0; border-radius: 4px; padding: 1.5rem;">
+          <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 4h-1V2h-2v2H8V2H6v2H5C3.89 4 3 4.9 3 6v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10z" fill="#4285F4"/>
+            </svg>
+            <div style="flex: 1;">
+              <h3 style="font-weight: 500;">Google Calendar</h3>
+              <p style="color: #666; font-size: 0.9rem;">Not connected</p>
+            </div>
+          </div>
+          <button
+            style="width: 100%; background: #4285F4; color: white; padding: 0.75rem; border: none; border-radius: 4px; font-weight: 500; cursor: pointer;"
+          >
+            Connect Google Calendar
+          </button>
+        </div>
+      </section>
+
+      <!-- Notification Preferences -->
+      <section style="background: white; border-radius: 8px; padding: 2rem;">
+        <h2 style="font-size: 1.3rem; margin-bottom: 1.5rem;">Notifications</h2>
+        
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; border: 1px solid #e0e0e0; border-radius: 4px; cursor: pointer;">
+            <input type="checkbox" checked style="width: 18px; height: 18px;" />
+            <div>
+              <div style="font-weight: 500;">New booking requests</div>
+              <div style="color: #666; font-size: 0.9rem;">Get notified when someone requests to book time with you</div>
+            </div>
+          </label>
+
+          <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; border: 1px solid #e0e0e0; border-radius: 4px; cursor: pointer;">
+            <input type="checkbox" checked style="width: 18px; height: 18px;" />
+            <div>
+              <div style="font-weight: 500;">Booking confirmations</div>
+              <div style="color: #666; font-size: 0.9rem;">Get notified when your booking is confirmed</div>
+            </div>
+          </label>
+
+          <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; border: 1px solid #e0e0e0; border-radius: 4px; cursor: pointer;">
+            <input type="checkbox" checked style="width: 18px; height: 18px;" />
+            <div>
+              <div style="font-weight: 500;">Cancellations</div>
+              <div style="color: #666; font-size: 0.9rem;">Get notified when a booking is cancelled</div>
+            </div>
+          </label>
+
+          <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; border: 1px solid #e0e0e0; border-radius: 4px; cursor: pointer;">
+            <input type="checkbox" checked style="width: 18px; height: 18px;" />
+            <div>
+              <div style="font-weight: 500;">Reminders</div>
+              <div style="color: #666; font-size: 0.9rem;">Get reminded about upcoming bookings</div>
+            </div>
+          </label>
+        </div>
+      </section>
+
+      <!-- Data & Privacy -->
+      <section style="background: white; border-radius: 8px; padding: 2rem;">
+        <h2 style="font-size: 1.3rem; margin-bottom: 1.5rem;">Data & Privacy</h2>
+        
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <button
+            style="padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; background: white; text-align: left; cursor: pointer;"
+          >
+            <div style="font-weight: 500;">Export your data</div>
+            <div style="color: #666; font-size: 0.9rem;">Download all your data in JSON format</div>
+          </button>
+
+          <button
+            style="padding: 0.75rem; border: 1px solid #d33; color: #d33; border-radius: 4px; background: white; text-align: left; cursor: pointer;"
+          >
+            <div style="font-weight: 500;">Delete account</div>
+            <div style="color: #d66; font-size: 0.9rem;">Permanently delete your account and all associated data</div>
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+      <a href="/dashboard" style="color: #0066cc;">
+        ← Back to dashboard
+      </a>
+    </div>
+  </main>
+</Layout>
